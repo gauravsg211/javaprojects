@@ -1,0 +1,50 @@
+ docker run -p 3306:3306 --name mysql2 -e MYSQL_ROOT_PASSWORD=britNA1234@ -e MYSQL_USERNAME=root -e MYSQL_PASSWORD=britNA1234@ -e MYSQL_DATABASE=spring_kafka -d mysql:5.6
+
+
+
+
+ $ docker run -p 9090:9020 --name spring_kafka --link mysql-standalone:mysql -d spring_kafka-0.1.0 
+
+
+docker container run -p 3306:3306 --name mysql2  --network network1 -e MYSQL_ROOT_PASSWORD=britNA1234@ -e MYSQL_USERNAME=root  -e MYSQL_PASSWORD=britNA1234@ -e MYS
+QL_DATABASE=spring_kafka -d mysql:5.6
+
+
+docker container run --network network1 --name spring_kafka -p 9090:9020 -d spring-kafka
+
+FROM  openjdk:8
+VOLUME /tmp
+ADD spring_kafka-0.1.0.jar app.jar
+
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+
+EXPOSE 9020
+
+
+FROM  openjdk:12-jdk-alpine
+VOLUME /tmp
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom","-jar","app.jar"]
+
+EXPOSE 9020
+
+
+mvn clean install -DskipTests=true(skipping tests)
+
+./gradlew build --exclude-task test(skipping tests)
+
+
+statrting kafka and zookeeper server along with their images.
+
+docker stop zookeeper kafka
+docker rm zookeeper kafka
+
+docker run --name zookeeper  -p 2181:2181 -d zookeeper
+
+
+
+
+
+docker run -p 9092:9092 --name kafka  -e KAFKA_ZOOKEEPER_CONNECT=husseinmac:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://husseinmac:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 -d confluentinc/cp-kafka 

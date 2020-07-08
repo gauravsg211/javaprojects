@@ -1,0 +1,21 @@
+ 
+.\bin\windows\zookeeper-server.start.bat .\config\zookeeper.properties( for zookeeper sever)
+
+.\bin\windows\kafka-server-start.bat .\config\server.properties (for kafka server)
+
+
+
+.\bin\windows\kafka-console-producer.bat --broker-list localhost:9092 --topic TestTopic (For producer)
+
+
+
+
+.\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic TestTopic --from-beginning (For Consumer).
+
+.\bin\windows\kafka-topics.bat --list --zookeeper localhost:2181
+
+.\bin\windows\kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic barack
+
+.\bin\windows\kafka-topics.bat --zookeeper localhost:2181 --delete --topic hello (delete)
+
+.\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic employee  --from-beginning
