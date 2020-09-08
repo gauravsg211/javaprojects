@@ -1,0 +1,128 @@
+package com.bbby.edd.PDPLCSSRules.util;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import org.springframework.http.ResponseEntity;
+
+import com.bbby.edd.pdplcssrules.model.FacilityInfoReqDTO;
+import com.bbby.edd.pdplcssrules.model.FacilitySelectorResDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class TestUtil {
+
+	private static final boolean generateFile = false;
+
+	public static final String printInput(FacilityInfoReqDTO inputDataModel) {
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.registerModule(new JavaTimeModule());
+			String s = objectMapper.writeValueAsString(inputDataModel);
+			log.debug("Test Input JSON {}", s);
+			return s;
+		} catch (Exception e) {
+			log.warn("Object to String Conversion in Test Input Data Preparation {}", e.getMessage());
+			return "";
+		}
+	}
+
+	public static final void printOutput(ResponseEntity<FacilitySelectorResDTO> response, String ruleName) {
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.registerModule(new JavaTimeModule());
+			String s = objectMapper.writeValueAsString(response.getBody());
+			log.debug("Test Output JSON {}", s);
+			generateOutputFile(ruleName, s);
+		} catch (Exception e) {
+			log.warn("Object to String Conversion in Test Input Data Preparation {}", e.getMessage());
+		}
+	}
+
+	@SafeVarargs
+	public static <T> List<T> getList(T... t) {
+		return new ArrayList<>(Arrays.asList(t));
+	}
+
+	public static byte[] compressString(FacilityInfoReqDTO inputDataModel, String ruleName) throws IOException {
+		String inputData = printInput(inputDataModel);
+		if (!(inputData != null && inputData.length() > 0)) {
+			return null;
+		}
+
+		byte[] compressedData = gZipCompression(inputData, ruleName);
+		generateInputFile(ruleName, inputData, compressedData);
+		return compressedData;
+	}
+
+	public static byte[] gZipCompression(String inputData, String ruleName) throws IOException {
+		String fileLocation = "" + ruleName;
+
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(inputData.length());
+		try {
+			GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream);
+			gzipOutputStream.write(inputData.getBytes());
+			gzipOutputStream.close();
+		} catch (IOException exp) {
+			log.debug("error while compressing input string : {}", exp);
+			throw exp;
+		}
+		byte[] compressedData = byteArrayOutputStream.toByteArray();
+		if (ruleName == "req_jsonToBinary") {
+			Files.write(Paths.get(fileLocation + "_input_binary.txt"), compressedData);
+		}
+
+		return compressedData;
+
+	}
+
+	private static void generateInputFile(String ruleName, String inputData, byte[] compressedData) throws IOException {
+		if (generateFile) {
+			String fileLocation = "" + ruleName;
+			Files.write(Paths.get(fileLocation + "_input_json.json"), inputData.getBytes());
+			Files.write(Paths.get(fileLocation + "_input_binary.txt"), compressedData);
+		}
+	}
+
+	private static void generateOutputFile(String ruleName, String output) throws IOException {
+		if (generateFile) {
+			String fileLocation = "" + ruleName;
+			Files.write(Paths.get(fileLocation + "_output_json.json"), output.getBytes());
+		}
+	}
+
+	public static void gZipDecompression(byte[] compressed) throws IOException {
+		ByteArrayInputStream bis = new ByteArrayInputStream(compressed);
+		GZIPInputStream gis = new GZIPInputStream(bis);
+		BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+		StringBuilder sb = new StringBuilder();
+		String line;
+		while ((line = br.readLine()) != null) {
+			sb.append(line);
+		}
+		br.close();
+		gis.close();
+		bis.close();
+
+		generateBinaryFile(sb);
+	}
+
+	private static void generateBinaryFile(StringBuilder sb) throws IOException {
+		String fileLocation = "req_BinaryToJson";
+		Files.write(Paths.get(fileLocation + "_input_json.json"), sb.toString().getBytes());
+	}
+
+}
