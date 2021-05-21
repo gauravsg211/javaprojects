@@ -53,3 +53,11 @@ sa as sysdba;
 select 3
 CONFIG GET databases
 info keyspaces
+
+//redis//
+starting redis server with a specified windows.conf file
+redis-cli  -h 127.0.0.1 -p 6379 -a gaurav
+
+connecting redis cli to that server 
+redis-cli  -h 127.0.0.1 -p 6379 -a gaurav
+redis-server redis.windows.conf
