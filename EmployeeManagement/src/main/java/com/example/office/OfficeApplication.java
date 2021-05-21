@@ -1,4 +1,4 @@
-package com.example.office;
+package com.example.demo.office;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

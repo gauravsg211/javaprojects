@@ -9,8 +9,10 @@
 
 
 
-
+/////for producer///////
 .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic TestTopic --from-beginning (For Consumer).
+
+.\bin\windows\kafka-console-producer.bat --broker-list 10.160.81.104:9092 --topic T.Q.ECBE.EOM.CapacitySyncToCloud
 
 .\bin\windows\kafka-topics.bat --list --zookeeper localhost:2181
 
@@ -19,3 +21,35 @@
 .\bin\windows\kafka-topics.bat --zookeeper localhost:2181 --delete --topic hello (delete)
 
 .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic employee  --from-beginning
+
+bin/kafka-topics.sh --zookeeper hostname:2181 --alter --config retention.ms=172800000 --topic <topic_name>
+
+bin/kafka-topics.sh --zookeeper localhost:2181 --describe --topics-with-overrides
+
+kafka-topics.sh --bootstrap-server server_ip:9092 --describe --topic topic_name
+
+######consumer####
+.bin\kafka-consumer-groups.bat -bootstrap-server localhost:9092 -list
+
+.\bin\windows\kafka-consumer-groups.bat -bootstrap-server localhost:9092 -describe group CapacityGroup61
+
+
+
+alter session set "_ORACLE_SCRIPT"=true;
+create user fred identified by flintstone;
+grant dba to pubs;
+sa as sysdba;
+
+
+@Bean
+    public FilterRegistrationBean corsFilterRegistration() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new CORSFilter());
+        registrationBean.setName("CORS Filter");
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(1);
+        return registrationBean;
+    }
+
+select 3
+CONFIG GET databases
+info keyspaces
