@@ -16,14 +16,14 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<vaadin.version>14.2.0</vaadin.version>
+		<vaadin.version>14.5.3</vaadin.version>
 	</properties>
 
 	<dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
